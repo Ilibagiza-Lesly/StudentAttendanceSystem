@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AttendEase - Student Attendance System</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        .attendance-tools {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .attendance-tools input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .print-btn {
+            background: #176b4d;
+            color: white;
+            border: none;
+            padding: 11px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .print-btn:hover {
+            background: #10543c;
+        }
+
+        .attendance-status {
+            padding: 7px 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .attendance-status.present {
+            background: #e1f5e9;
+            color: #13733c;
+        }
+
+        .attendance-status.absent {
+            background: #ffe5e5;
+            color: #b42318;
+        }
+
+        .status-label {
+            display: inline-block;
+            min-width: 75px;
+            padding: 6px 10px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status-label.present {
+            background: #e1f5e9;
+            color: #13733c;
+        }
+
+        .status-label.absent {
+            background: #ffe5e5;
+            color: #b42318;
+        }
+
+        .print-heading {
+            display: none;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #attendance, #attendance * {
+                visibility: visible;
+            }
+
+            #attendance {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 15px;
+                box-shadow: none;
+                background: white;
+            }
+
+            #attendance .attendance-tools,
+            #attendance input,
+            #attendance button {
+                display: none !important;
+            }
+
+            #attendance .print-heading {
+                display: block !important;
+                visibility: visible;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            #attendance .print-heading * {
+                visibility: visible;
+            }
+
+            #attendance table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            #attendance th,
+            #attendance td {
+                border: 1px solid #333 !important;
+                padding: 10px;
+                color: black !important;
+            }
+
+            #attendance th {
+                background: #eee !important;
+            }
+
+            #attendance .status-label {
+                border: none;
+            }
+
+            .signature-area {
+                display: block !important;
+                margin-top: 60px;
+            }
+        }
+
+        .signature-area {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>AttendEase</span>
+        </div>
+
+        <nav>
+            <a href="#" class="nav-link active">
+                <i class="fas fa-chart-pie"></i>
+                Dashboard
+            </a>
+
+            <a href="#students" class="nav-link">
+                <i class="fas fa-users"></i>
+                Students
+            </a>
+
+            <a href="#attendance" class="nav-link">
+                <i class="fas fa-clipboard-check"></i>
+                Attendance
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <p>Student Management</p>
+            <small>Attendance made simple.</small>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Welcome back! Here's what's happening today.</p>
+            </div>
+
+            <div class="profile">
+                <div class="profile-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <strong>Administrator</strong>
+                    <small>System Admin</small>
+                </div>
+            </div>
+        </header>
+
+        <!-- Statistics -->
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div>
+                    <p>Total Students</p>
+                    <h2 id="totalStudents">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div>
+                    <p>Present Today</p>
+                    <h2 id="presentStudents">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon red">
+                    <i class="fas fa-user-times"></i>
+                </div>
+                <div>
+                    <p>Absent Today</p>
+                    <h2 id="absentStudents">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div>
+                    <p>Attendance Rate</p>
+                    <h2 id="attendanceRate">0%</h2>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Students Section -->
+        <section class="content-card" id="students">
+
+            <div class="section-header">
+                <div>
+                    <h2>Student Records</h2>
+                    <p>Manage and monitor registered students.</p>
+                </div>
+
+                <button class="primary-btn" id="openAddForm">
+                    <i class="fas fa-plus"></i>
+                    Add Student
+                </button>
+            </div>
+
+            <div class="search-area">
+                <i class="fas fa-search"></i>
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search by name or registration number..."
+                >
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Reg. Number</th>
+                            <th>Student Name</th>
+                            <th>Email</th>
+                            <th>Course</th>
+                            <th>Year</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="studentTableBody">
+                        <tr>
+                            <td colspan="6" class="empty-message">
+                                No students registered yet.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+        <!-- Attendance Section -->
+        <section class="content-card" id="attendance">
+
+            <div class="section-header">
+                <div>
+                    <h2>Daily Attendance</h2>
+                    <p>Record and monitor student attendance.</p>
+                </div>
+
+                <div class="attendance-tools">
+                    <input type="date" id="attendanceDate">
+
+                    <button type="button" class="print-btn" onclick="printAttendance()">
+                        <i class="fas fa-print"></i>
+                        Print Attendance
+                    </button>
+                </div>
+            </div>
+
+            <div class="print-heading">
+                <h1>AttendEase</h1>
+                <h2>STUDENT ATTENDANCE REPORT</h2>
+                <p>Attendance Date: <span id="printAttendanceDate"></span></p>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Reg. Number</th>
+                            <th>Student Name</th>
+                            <th>Course</th>
+                            <th>Attendance Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="attendanceTableBody">
+                        <tr>
+                            <td colspan="4" class="empty-message">
+                                No students available for attendance.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="signature-area">
+                <p><strong>Total Present:</strong> <span id="printPresent">0</span></p>
+                <p><strong>Total Absent:</strong> <span id="printAbsent">0</span></p>
+                <br><br>
+                <p>Lecturer's Name: __________</p>
+                <br>
+                <p>Signature: ___________</p>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<!-- Add/Edit Student Modal -->
+<div class="modal" id="studentModal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h2 id="modalTitle">Add New Student</h2>
+            <button class="close-btn" id="closeModal">&times;</button>
+        </div>
+
+        <form id="studentForm">
+
+            <input type="hidden" id="studentId">
+
+            <label for="regNumber">Registration Number</label>
+            <input type="text" id="regNumber" placeholder="e.g. BU/BC/2025/001" required>
+
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" placeholder="Enter full name" required>
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="Enter email address" required>
+
+            <label for="course">Course / Department</label>
+            <input type="text" id="course" placeholder="e.g. Business Computing" required>
+
+            <label for="year">Year of Study</label>
+            <select id="year" required>
+                <option value="">Select year</option>
+                <option value="Year 1">Year 1</option>
+                <option value="Year 2">Year 2</option>
+                <option value="Year 3">Year 3</option>
+                <option value="Year 4">Year 4</option>
+            </select>
+
+            <div class="modal-actions">
+                <button type="button" class="cancel-btn" id="cancelModal">
+                    Cancel
+                </button>
+
+                <button type="submit" class="primary-btn">
+                    Save Student
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+<script>
+    function printAttendance() {
+        const dateInput = document.getElementById("attendanceDate");
+        const date = dateInput.value;
+
+        if (!date) {
+            alert("Please select an attendance date first.");
+            return;
+        }
+
+        const rows = document.querySelectorAll(
+            "#attendanceTableBody tr"
+        );
+
+        if (
+            rows.length === 0 ||
+            rows[0].querySelector(".empty-message")
+        ) {
+            alert("There are no attendance records to print.");
+            return;
+        }
+
+        document.getElementById("printAttendanceDate").textContent = date;
+
+        let present = 0;
+        let absent = 0;
+
+        document.querySelectorAll(
+            "#attendanceTableBody .status-label"
+        ).forEach(status => {
+            if (status.textContent.trim() === "Present") present++;
+            if (status.textContent.trim() === "Absent") absent++;
+        });
+
+        document.getElementById("printPresent").textContent = present;
+        document.getElementById("printAbsent").textContent = absent;
+
+        window.print();
+    }
+</script>
+
+</body>
+</html>
