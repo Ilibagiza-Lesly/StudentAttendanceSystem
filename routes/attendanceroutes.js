@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 
-const Attendance = require("../models/attendance");
+const Attendance = require("../models/Attendance");
 const Student = require("../models/student");
 const ClassSession = require("../models/ClassSession");
 

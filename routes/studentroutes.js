@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Student = require("../models/student");
-const Attendance = require("../models/attendance");
+const Attendance = require("../models/Attendance");
 
 // GET ALL STUDENTS
 router.get("/", async (req, res) => {
