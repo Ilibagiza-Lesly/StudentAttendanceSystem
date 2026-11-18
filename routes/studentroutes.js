@@ -70,7 +70,7 @@ router.delete("/:id", async (req, res) => {
             });
         }
 
-        // Remove attendance records belonging to this student
+        // Also delete attendance records belonging to this student.
         await Attendance.deleteMany({
             studentId: req.params.id
         });

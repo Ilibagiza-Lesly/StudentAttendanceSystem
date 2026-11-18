@@ -181,20 +181,18 @@ studentForm.addEventListener("submit", async event => {
 
     try {
         if (editingStudentId) {
-            await apiRequest(`${API.students}/${editingStudentId}`, {
-                method: "PUT",
-                body: JSON.stringify(studentData)
-            });
-
-            alert("Student updated successfully.");
-
+            await apiRequest(
+                `${API.students}/${editingStudentId}`,
+                {
+                    method: "PUT",
+                    body: JSON.stringify(studentData)
+                }
+            );
         } else {
             await apiRequest(API.students, {
                 method: "POST",
                 body: JSON.stringify(studentData)
             });
-
-            alert("Student registered successfully.");
         }
 
         closeStudentModal();
@@ -204,7 +202,6 @@ studentForm.addEventListener("submit", async event => {
         alert(error.message);
     }
 });
-
 // ==========================================
 // EDIT STUDENT
 // ==========================================
